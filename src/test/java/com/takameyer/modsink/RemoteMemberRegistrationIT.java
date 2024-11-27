@@ -37,10 +37,10 @@ public class RemoteMemberRegistrationIT {
 
     private static final String SERVER_HOST = System.getenv("SERVER_HOST") != null
             ? System.getenv("SERVER_HOST")
-            : System.getProperty("server.host", "http://localhost:8080/kitchensink");
+            : System.getProperty("server.host", "http://localhost:8080");
 
     private String getHTTPEndpoint() {
-        return SERVER_HOST + "/rest/members";
+        return SERVER_HOST + "/api/members";
     }
 
     @Test
@@ -66,6 +66,8 @@ public class RemoteMemberRegistrationIT {
 
         // Assert the response
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertTrue(response.getBody().isEmpty(), "Response body should be empty");
+        Member registeredMember = objectMapper.readValue(response.getBody(), Member.class);
+        Assertions.assertNotNull(registeredMember.getId(), "The member ID should not be null after registration");
+        Assertions.assertEquals(newMember.getName(), registeredMember.getName(), "The registered member name should match the input");
     }
 }

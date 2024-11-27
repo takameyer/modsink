@@ -5,6 +5,7 @@ import com.takameyer.modsink.model.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 @Service
@@ -18,5 +19,13 @@ public class MemberService {
     public void register(Member member) {
         log.info("Registering " + member.getName());
         memberRepository.save(member);
+    }
+
+    public Member findById(Long id) {
+        return memberRepository.findById(id).orElse(null);
+    }
+
+    public List<Member> findAll() {
+        return memberRepository.findAll();
     }
 }
