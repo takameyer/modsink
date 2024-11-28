@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Member Registration</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+  <h1>Register a New Member</h1>
+  <!-- Global error message -->
+  <div th:if="${globalError}" class="error-message">
+    <p th:text="${globalError}"></p>
+  </div>
+  <form th:action="@{/register}" th:object="${member}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" th:field="*{name}" id="name" required="required" />
+    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message">Name Error</div>
+    <label for="email">Email:</label>
+    <input type="email" th:field="*{email}" id="email" required="required" />
+    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message">Email Error</div>
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="tel" th:field="*{phoneNumber}" id="phoneNumber" required="required" />
+    <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="error-message">Phone Number Error</div>
+    <button type="submit">Register</button>
+
+  </form>
+
+
+  <h1>Registered Members</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="member : ${members}">
+      <td th:text="${member.id}">1</td>
+      <td th:text="${member.name}">John Doe</td>
+      <td th:text="${member.email}"></td>
+      <td th:text="${member.phoneNumber}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

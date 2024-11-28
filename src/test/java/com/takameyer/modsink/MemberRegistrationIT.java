@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.takameyer.modsink.data.MemberRepository;
 import com.takameyer.modsink.model.Member;
 import com.takameyer.modsink.service.MemberService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,12 @@ public class MemberRegistrationIT {
     private MemberRepository memberRepository;
 
     private static final Logger log = Logger.getLogger(MemberRegistrationIT.class.getName());
+
+    @BeforeEach
+    public void cleanUp() {
+        memberRepository.deleteAll();
+    }
+
 
     @Test
     public void testRegister() throws Exception {
@@ -107,5 +115,32 @@ public class MemberRegistrationIT {
 
         // Log the outcome
         log.info("All members were found successfully");
+    }
+
+    @Test
+    public void testDuplicateEmail() {
+        // Create a new Member
+        Member newMember = new Member();
+        newMember.setName("Jane Doe");
+        newMember.setEmail("jane@email.com");
+        newMember.setPhoneNumber("2125551234");
+
+        // Perform the registration
+        memberService.register(newMember);
+
+        // Create another Member with the same email
+        Member duplicateMember = new Member();
+        duplicateMember.setName("Jane Doe");
+        duplicateMember.setEmail("jane@email.com");
+        duplicateMember.setPhoneNumber("2125551234");
+
+        // Assert that the correct exception was thrown
+        try {
+            memberService.register(duplicateMember);
+        } catch (Exception e) {
+            log.info("Duplicate email was caught successfully");
+            Assertions.assertEquals("Email already exists: " + duplicateMember.getEmail(), e.getMessage());
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package com.takameyer.modsink.service;
 
 import com.takameyer.modsink.data.MemberRepository;
+import com.takameyer.modsink.exception.DuplicateEmailException;
 import com.takameyer.modsink.model.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class MemberService {
 
     public void register(Member member) {
         log.info("Registering " + member.getName());
+        if (emailExists(member.getEmail())) {
+            throw new DuplicateEmailException("Email already exists: " + member.getEmail());
+        }
         memberRepository.save(member);
     }
 
@@ -27,5 +31,9 @@ public class MemberService {
 
     public List<Member> findAll() {
         return memberRepository.findAll();
+    }
+
+    private boolean emailExists(String email) {
+        return memberRepository.findByEmail(email) != null;
     }
 }
