@@ -17,17 +17,26 @@
 package com.takameyer.modsink;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.takameyer.modsink.data.MemberRepository;
 import com.takameyer.modsink.model.Member;
+import com.takameyer.modsink.service.MemberService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class RemoteMemberRegistrationIT {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -35,16 +44,27 @@ public class RemoteMemberRegistrationIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String SERVER_HOST = System.getenv("SERVER_HOST") != null
-            ? System.getenv("SERVER_HOST")
-            : System.getProperty("server.host", "http://localhost:8080");
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    // Ensure the tests don't collide with each other
+    @BeforeEach
+    public void cleanUp() {
+        memberRepository.deleteAll();
+    }
 
     private String getHTTPEndpoint() {
-        return SERVER_HOST + "/api/members";
+        return "http://localhost:" + port + "/api/members";
     }
 
     @Test
     public void testRegister() throws Exception {
+        //log the getHTTPEndpoint result
+        System.out.println(getHTTPEndpoint());
+
         // Create a new Member
         Member newMember = new Member();
         newMember.setName("Jane Doe");
@@ -70,4 +90,92 @@ public class RemoteMemberRegistrationIT {
         Assertions.assertNotNull(registeredMember.getId(), "The member ID should not be null after registration");
         Assertions.assertEquals(newMember.getName(), registeredMember.getName(), "The registered member name should match the input");
     }
+
+    @Test
+    public void testInvalidEmailFormat() throws Exception {
+        // Create a new Member with an invalid email
+        Member newMember = new Member();
+        newMember.setName("Jane Doe");
+        newMember.setEmail("invalid-email");
+        newMember.setPhoneNumber("2125551234");
+
+        // Serialize the Member object to JSON
+        String json = objectMapper.writeValueAsString(newMember);
+
+        // Set up the HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create the HTTP entity with the headers and JSON body
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+
+        // Send the POST request
+        ResponseEntity<String> response = restTemplate.postForEntity(getHTTPEndpoint(), requestEntity, String.class);
+
+        // Assert the response
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assertions.assertTrue(response.getBody().contains("must be a well-formed email address"), "The error message should indicate an invalid email format");
+    }
+
+    @Test
+    public void testInvalidPhoneNumber() throws Exception {
+        // Create a new Member with an invalid phone number
+        Member newMember = new Member();
+        newMember.setName("Jane Doe");
+        newMember.setEmail("jane@mailinator.com");
+        newMember.setPhoneNumber("12345");
+
+        // Serialize the Member object to JSON
+        String json = objectMapper.writeValueAsString(newMember);
+
+        // Set up the HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create the HTTP entity with the headers and JSON body
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+
+        // Send the POST request
+        ResponseEntity<String> response = restTemplate.postForEntity(getHTTPEndpoint(), requestEntity, String.class);
+
+        // Assert the response
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assertions.assertTrue(response.getBody().contains("size must be between 10 and 12"), "The error message should indicate an invalid phone number");
+    }
+
+    @Test
+    public void testDuplicateEmail() throws Exception {
+        // Create a new Member
+        Member newMember = new Member();
+        newMember.setName("Jane Doe");
+        newMember.setEmail("jane@mailinator.com");
+        newMember.setPhoneNumber("2125551234");
+
+        // Register the member
+        memberService.register(newMember);
+
+        // Attempt to register another member with the same email
+        Member duplicateMember = new Member();
+        duplicateMember.setName("John Doe");
+        duplicateMember.setEmail("jane@mailinator.com");
+        duplicateMember.setPhoneNumber("2125555678");
+
+        // Serialize the Member object to JSON
+        String json = objectMapper.writeValueAsString(duplicateMember);
+
+        // Set up the HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create the HTTP entity with the headers and JSON body
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+
+        // Send the POST request
+        ResponseEntity<String> response = restTemplate.postForEntity(getHTTPEndpoint(), requestEntity, String.class);
+
+        // Assert the response
+        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assertions.assertTrue(response.getBody().contains("Email already exists"), "The error message should indicate a duplicate email");
+    }
+
 }
