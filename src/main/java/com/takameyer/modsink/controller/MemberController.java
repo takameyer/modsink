@@ -28,7 +28,7 @@ public class MemberController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@PathVariable Long id) {
+    public ResponseEntity<Member> getMemberById(@PathVariable String id) {
         Member member = memberService.findById(id);
         if (member == null) {
             return ResponseEntity.notFound().build();

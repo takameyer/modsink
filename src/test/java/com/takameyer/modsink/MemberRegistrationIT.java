@@ -80,7 +80,7 @@ public class MemberRegistrationIT {
         Member foundMember = memberRepository.findByEmail("john@mailinator.com");
         assertNotNull(foundMember, "The member should not be null");
 
-        Long memberId = foundMember.getId();
+        String memberId = foundMember.getId();
 
         // Find member by id
         foundMember = memberRepository.findById(memberId).get();
@@ -103,7 +103,7 @@ public class MemberRegistrationIT {
         assertEquals(3, ((ArrayList<Member>) allMembers).size(), "There should be 3 members");
 
         // Find all Members ordered by name
-        List<Member> allMembersOrdered = memberRepository.findAllByOrderByName();
+        List<Member> allMembersOrdered = memberRepository.findAllByOrderByNameAsc();
         assertNotNull(allMembersOrdered, "The members should not be null");
 
         assertEquals(3, ((ArrayList<Member>) allMembers).size(), "There should be 3 members");

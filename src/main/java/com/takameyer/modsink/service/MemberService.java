@@ -25,12 +25,12 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public Member findById(Long id) {
+    public Member findById(String id) {
         return memberRepository.findById(id).orElse(null);
     }
 
     public List<Member> findAll() {
-        return memberRepository.findAll();
+        return memberRepository.findAllByOrderByNameAsc();
     }
 
     private boolean emailExists(String email) {
