@@ -1,21 +1,27 @@
 # Modsink Application
 
-This project is a Spring Boot application that manages member registrations. It includes RESTful APIs and a simple web interface for registering and viewing members. The application uses JPA for data persistence and is tested using JUnit.
+This project is a demonstration of how one could migrate a legacy JBoss Java application to use modern technologies.
+The application itself is a RESTful API with a simple frontend interface for registering and viewing a list of members.
+The chosen modernization upgrades for this project are:
+* Spring Boot for the application layer
+* MongoDB for the data layer
+* Thymeleaf for the frontend layer
+* JUnit for testing
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 
-- **Java Development Kit (JDK)**: Make sure you have JDK 11 or later installed.
-- **Maven**: Ensure you have Apache Maven installed for building the project.
-- **Database**: The application uses an in-memory H2 database by default, so no additional setup is required for development purposes.
+- **Java Development Kit (JDK)**: Make sure you have [JDK 21](https://www.oracle.com/java/technologies/downloads/) or later installed.
+- **Maven**: Ensure you have [Apache Maven](https://maven.apache.org/install.html) installed for building the project.
+- **Database**: The application uses MongoDB for it's persistance layer.  Either deploy a local community MongoDB, or better yet, deploy a free tier database with [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database) in the cloud
 
 ## Building the Project
 
 1. **Clone the Repository**: Start by cloning the repository to your local machine.
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/takameyer/modsink
    cd modsink
    ```
 
@@ -53,7 +59,7 @@ This will execute all the tests and provide a summary of the results.
 
 ## Configuration
 
-The application is configured to use an in-memory H2 database for development. You can change the database configuration in the `src/main/resources/application.properties` file if needed.
+The application is configured to MongoDB for development. You can change the database configuration in the `src/main/resources/application.properties` file if needed.
 
 ## Troubleshooting
 
