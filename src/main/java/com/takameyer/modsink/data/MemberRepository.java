@@ -1,12 +1,11 @@
 package com.takameyer.modsink.data;
 
 import com.takameyer.modsink.model.Member;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends MongoRepository<Member, String> {
 
     // findById is already defined in JpaRepository
 
@@ -16,6 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member findByPhoneNumber(String phoneNumber);
 
-    @Query("SELECT m FROM Member m ORDER BY m.name ASC")
-    List<Member> findAllByOrderByName();
+    List<Member> findAllByOrderByNameAsc();
+
 }

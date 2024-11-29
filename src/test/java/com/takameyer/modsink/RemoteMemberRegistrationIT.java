@@ -20,15 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.takameyer.modsink.data.MemberRepository;
 import com.takameyer.modsink.model.Member;
 import com.takameyer.modsink.service.MemberService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
+import org.testcontainers.containers.MongoDBContainer;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,6 +38,8 @@ public class RemoteMemberRegistrationIT {
 
     @LocalServerPort
     private int port;
+
+    static MongoDBContainer mongodb = new MongoDBContainer("mongo:7.0");
 
     @Autowired
     private RestTemplate restTemplate;
@@ -49,6 +52,21 @@ public class RemoteMemberRegistrationIT {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @BeforeAll
+    static void beforeAll() {
+        mongodb.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mongodb.close();
+    }
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", mongodb::getReplicaSetUrl);
+    }
 
     // Ensure the tests don't collide with each other
     @BeforeEach

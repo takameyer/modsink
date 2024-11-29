@@ -7,6 +7,7 @@ The chosen modernization upgrades for this project are:
 * MongoDB for the data layer
 * Thymeleaf for the frontend layer
 * JUnit for testing
+* TestContainers for testing persistance layer
 
 ## Prerequisites
 
@@ -15,6 +16,36 @@ Before you begin, ensure you have met the following requirements:
 - **Java Development Kit (JDK)**: Make sure you have [JDK 21](https://www.oracle.com/java/technologies/downloads/) or later installed.
 - **Maven**: Ensure you have [Apache Maven](https://maven.apache.org/install.html) installed for building the project.
 - **Database**: The application uses MongoDB for it's persistance layer.  Either deploy a local community MongoDB, or better yet, deploy a free tier database with [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database) in the cloud
+- **Docker**(Optional for Testing): The tests for this application are using TestContainers, which require Docker.  This allows us to perform integration tests against a test database and not against the one configured in the application.
+
+## Configuring MongoDB Database
+
+There are two recommended ways to go about this, either with Docker or with MongoDB Atlas.
+
+### MongoDB Atlas
+* Register and Login to [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database)
+* Create an M0 Cluster from the Atlas Dashboard
+* Navigate to SECURITY -> Database Access and add a new Database User with permissions to `read and write to any database`
+   * Note the Username and Password
+* Click "Connect" in our cluster to find and note the uri string to your MongoDB instance
+* In the project, modify `application.properties` under the resources folder.  Change `spring.data.mongodb.uri` to your Atlas URL with the following format: `mongodb+srv://<username>:<password>@<cluster-uri>/<database-name>?retryWrites=true&w=majority
+* NOTE: Depending on your permissions, it may not be necessary to create the database before running the application.  To be safe, create the database beforehand and ensure your user has permission to read and write from it.
+
+### Docker Image
+* User the following commands to quickly deploy a local MongoDB instance:
+
+   ```bash
+   docker pull mongo
+   docker run --name mongodb -d -p 27017:27017 mongo
+   ```
+
+* In the project, ensure `application.properties` has `spring.data.mongodb.uri` set to `mongodb://localhost:27017/modsink`
+
+* To stop the docker image:
+   ```bash
+   docker stop mongodb
+   ```
+
 
 ## Building the Project
 

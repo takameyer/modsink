@@ -1,15 +1,14 @@
 package com.takameyer.modsink.model;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "member", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Document(collection = "members")
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Commonly used in Spring Boot with JPA
-    private Long id;
+    private String id;
 
     @NotBlank
     @Size(min = 1, max = 25)
@@ -23,15 +22,14 @@ public class Member {
     @NotBlank
     @Size(min = 10, max = 12)
     @Digits(fraction = 0, integer = 12)
-    @Column(name = "phone_number")
     private String phoneNumber;
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
