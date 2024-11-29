@@ -1,6 +1,6 @@
 # Modsink Application
 
-This project is a demonstration of how one could migrate a legacy JBoss Java application to use modern technologies.
+This project is a demonstration of how one could migrate a [legacy JBoss Java application](https://github.com/jboss-developer/jboss-eap-quickstarts/tree/8.0.x/kitchensink) to use modern technologies.
 The application itself is a RESTful API with a simple frontend interface for registering and viewing a list of members.
 The chosen modernization upgrades for this project are:
 * Spring Boot for the application layer
@@ -96,4 +96,9 @@ The application is configured to MongoDB for development. You can change the dat
 
 - **Port Conflicts**: If port `8080` is already in use, you can change the port by modifying the `server.port` property in the `application.properties` file.
 - **Dependency Issues**: Ensure all dependencies are correctly specified in the `pom.xml` file. Run `mvn clean install` to resolve any dependency issues.
+
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
