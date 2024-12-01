@@ -4,6 +4,8 @@ import com.takameyer.modsink.exception.DuplicateEmailException;
 import com.takameyer.modsink.model.Member;
 import com.takameyer.modsink.service.MemberService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/members")
 public class MemberController {
+
+    private static final Logger log = LoggerFactory.getLogger(MemberController.class);
 
     @Autowired
     private MemberService memberService;
@@ -59,6 +63,7 @@ public class MemberController {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        log.info("Validation completed. violations found: " + ex.getBindingResult().getAllErrors().size());
         return errors;
     }
 }

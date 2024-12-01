@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface MemberRepository extends MongoRepository<Member, String> {
 
-    // findById is already defined in JpaRepository
-
     Member findByEmail(String email);
 
     Member findByName(String name);

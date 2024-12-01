@@ -3,16 +3,17 @@ package com.takameyer.modsink.service;
 import com.takameyer.modsink.data.MemberRepository;
 import com.takameyer.modsink.exception.DuplicateEmailException;
 import com.takameyer.modsink.model.Member;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class MemberService {
 
-    private final Logger log = Logger.getLogger(MemberService.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(MemberService.class);
 
     @Autowired
     private MemberRepository memberRepository;
