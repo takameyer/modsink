@@ -2,6 +2,7 @@ package com.takameyer.modsink.controller;
 
 import com.takameyer.modsink.model.Member;
 import com.takameyer.modsink.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +20,28 @@ public class HomeController {
     @Autowired
     private MemberService memberService;
 
+    /**
+     * Home page
+     * @param model The model
+     * @return The view name
+     */
     @GetMapping("/")
+    @Operation(summary = "Home page")
     public String home(Model model) {
         model.addAttribute("member", new Member());
         model.addAttribute("members", memberService.findAll());
         return "index";
     }
 
+    /**
+     * Register a new member
+     * @param member The member
+     * @param bindingResult The binding result
+     * @param model The model
+     * @return The view name
+     */
     @PostMapping("/register")
+    @Operation(summary = "Register a new member")
     public String register(@Valid Member member, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             log.info("Violations found: " + bindingResult.getAllErrors().size());

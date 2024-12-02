@@ -18,6 +18,11 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
+    /**
+     * Register a new member.
+     * @param member - the member to register
+     * @throws DuplicateEmailException - if the email already exists
+     */
     public void register(Member member) {
         log.info("Registering " + member.getName());
         if (emailExists(member.getEmail())) {
@@ -26,14 +31,28 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    /**
+     * Find a member by ID.
+     * @param id - the ID to search for
+     * @return member
+     */
     public Member findById(String id) {
         return memberRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Find all members.
+     * @return a list of all members
+     */
     public List<Member> findAll() {
         return memberRepository.findAllByOrderByNameAsc();
     }
 
+    /**
+     * Check if an email exists.
+     * @param email - the email to check
+     * @return true if the email exists, false otherwise
+     */
     private boolean emailExists(String email) {
         return memberRepository.findByEmail(email) != null;
     }

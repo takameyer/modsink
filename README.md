@@ -8,6 +8,7 @@ The chosen modernization upgrades for this project are:
 * Thymeleaf for the frontend layer
 * JUnit for testing
 * TestContainers for testing persistance layer
+* SpringDoc OpenAPI for API documentation
 
 ## Prerequisites
 
@@ -87,6 +88,16 @@ mvn test
 ```
 
 This will execute all the tests and provide a summary of the results.
+
+## Documentation
+
+The project uses SpringDoc OpenAPI to generate API documentation. You can access the API documentation at `http://localhost:8080/swagger-ui.html`.
+
+To generate the documentation, use the following command:
+
+```bash
+mvn javadoc:javadoc
+```
 
 ## Configuration
 
