@@ -39,6 +39,7 @@ public class RemoteMemberRegistrationIT {
     @LocalServerPort
     private int port;
 
+    // Start a MongoDB container
     static MongoDBContainer mongodb = new MongoDBContainer("mongo:7.0");
 
     @Autowired
